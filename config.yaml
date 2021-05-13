@@ -1,0 +1,27 @@
+# Gin-Vue-Admin Global Configuration
+
+# zap logger configuration
+zap:
+  level: 'debug'
+  format: 'console'
+  prefix: '[redisdual]'
+  director: 'log'
+  link-name: 'latest_log'
+  show-line: true
+  encode-level: 'LowercaseColorLevelEncoder'
+#  stacktrace-key: 'stacktrace'
+  log-in-console: true
+
+# redis configuration
+redisrw:
+  db: 0
+  addr: '114.67.76.82:16375'
+  password: 'redistest0102'
+
+redisro:
+  db: 0
+  addr: '114.67.120.120:16375'
+  password: 'redistest0102'
+
+
+
