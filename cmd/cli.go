@@ -42,8 +42,8 @@ func init() {
 func getBasicCmd() *cobra.Command {
 
 	rootCmd := &cobra.Command{
-		Use:   "redissyncer-portal",
-		Short: "redissyncer-portal",
+		Use:   "redisdual",
+		Short: "redisdual",
 		Long:  "",
 	}
 
@@ -52,6 +52,8 @@ func getBasicCmd() *cobra.Command {
 	rootCmd.AddCommand(
 		NewConfigCommand(),
 		NewStartCommand(),
+		NewStopCommand(),
+		NewStatusCommand(),
 	)
 
 	rootCmd.Flags().ParseErrorsWhitelist.UnknownFlags = true

@@ -5,11 +5,15 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"redisdual/core"
 	"redisdual/global"
 	"strconv"
+	"syscall"
 	"time"
 )
 
@@ -56,8 +60,24 @@ func startServer() {
 	}
 
 	global.RSPLog = core.Zap()
-
 	global.RSPLog.Info("server start ... ")
+
+	pidMap := make(map[string]int)
+	// 记录pid
+	pid := syscall.Getpid()
+	pidMap["pid"] = pid
+
+	pidYaml, _ := yaml.Marshal(pidMap)
+	dir, err := filepath.Abs(filepath.Dir(os.Args[0]))
+	if err != nil {
+		panic(err)
+	}
+
+	if err := ioutil.WriteFile(dir+"/pid", pidYaml, 0664); err != nil {
+		global.RSPLog.Sugar().Error(err)
+		panic(err)
+	}
+	global.RSPLog.Sugar().Infof("Actual pid is %d", pid)
 
 	//redis 读写实例
 	redisRW := GetRedisRW()
@@ -71,8 +91,9 @@ func startServer() {
 	global.RSPLog.Sugar().Info("execinterval:", global.RSPViper.GetInt("execinterval"))
 	i := 0
 	for {
-		redisRW.Set("str"+strconv.Itoa(i), i, 3600*time.Second)
-		dual(redisRW, redisRO, "str"+strconv.Itoa(i))
+		redisRW.Set(global.RSPViper.GetString("localkeyprefix")+"_key"+strconv.Itoa(i), i, 3600*time.Second)
+		dual(redisRW, redisRO, global.RSPViper.GetString("localkeyprefix")+"_key"+strconv.Itoa(i))
+		dual(redisRW, redisRO, global.RSPViper.GetString("remotekeyprefix")+"_key"+strconv.Itoa(i))
 		i++
 		time.Sleep(time.Duration(global.RSPViper.GetInt("execinterval")) * time.Millisecond)
 	}
@@ -80,21 +101,21 @@ func startServer() {
 }
 
 //双读程序，先读取只读库，若有数据返回，若没有读取读写库
-func dual(rw *redis.Client,ro *redis.Client,key string){
-	roResult,err:=ro.Get(key).Result()
+func dual(rw *redis.Client, ro *redis.Client, key string) {
+	roResult, err := ro.Get(key).Result()
 
-	if err==nil && roResult!=""{
-		global.RSPLog.Sugar().Info("Get result from redisro:",roResult)
+	if err == nil && roResult != "" {
+		global.RSPLog.Sugar().Infof("Get key %s from redisro result is:%s ", key, roResult)
 		return
 	}
 
-	rwResult,err:=rw.Get(key).Result()
-	if err!=nil{
-		global.RSPLog.Sugar().Info("no result return!")
+	rwResult, err := rw.Get(key).Result()
+	if err != nil || rwResult == "" {
+		global.RSPLog.Sugar().Infof("key %s no result return!", key)
 		return
 	}
 
-	global.RSPLog.Sugar().Info("Get result from redisrw:",rwResult)
+	global.RSPLog.Sugar().Infof("Get key %s from redisrw result is: %s ", key, rwResult)
 
 }
 

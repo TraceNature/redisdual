@@ -15,6 +15,10 @@ zap:
 # 执行时间间隔，单位毫秒
 execinterval: 1
 
+# 本地key前缀
+localkeyprefix: a
+remotekeyprefix: b
+
 # redis configuration
 redisrw:
   db: 0
