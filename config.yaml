@@ -9,8 +9,11 @@ zap:
   link-name: 'latest_log'
   show-line: true
   encode-level: 'LowercaseColorLevelEncoder'
-#  stacktrace-key: 'stacktrace'
+  #  stacktrace-key: 'stacktrace'
   log-in-console: true
+
+# 执行时间间隔，单位毫秒
+execinterval: 1
 
 # redis configuration
 redisrw:

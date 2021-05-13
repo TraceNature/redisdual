@@ -60,34 +60,21 @@ func startServer() {
 	global.RSPLog.Info("server start ... ")
 
 	//redis 读写实例
-	redisRW:=GetRedisRW()
+	redisRW := GetRedisRW()
 
 	//redis 只读实例
-	redisRO:=GetRedisRO()
+	redisRO := GetRedisRO()
 
 	//清理RW
 	redisRW.FlushAll()
 
-	i:=0
+	global.RSPLog.Sugar().Info("execinterval:", global.RSPViper.GetInt("execinterval"))
+	i := 0
 	for {
-		redisRW.Set("str"+strconv.Itoa(i),i,3600*time.Second)
-
-		//resultro,err:=redisRO.Get("str"+strconv.Itoa(i)).Result()
-		//if err!=nil{
-		//	global.RSPLog.Sugar().Error(err)
-		//}
-		//
-		//global.RSPLog.Sugar().Info("redisro get result:",resultro)
-		//
-		//resultrw,err:=redisRW.Get("str"+strconv.Itoa(i)).Result()
-		//
-		//if err!=nil{
-		//	global.RSPLog.Sugar().Error(err)
-		//}
-		//global.RSPLog.Sugar().Info("redisro get result:",resultrw)
-		dual(redisRW,redisRO,"str"+strconv.Itoa(i))
+		redisRW.Set("str"+strconv.Itoa(i), i, 3600*time.Second)
+		dual(redisRW, redisRO, "str"+strconv.Itoa(i))
 		i++
-
+		time.Sleep(time.Duration(global.RSPViper.GetInt("execinterval")) * time.Millisecond)
 	}
 
 }
