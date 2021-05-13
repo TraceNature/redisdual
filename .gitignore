@@ -27,6 +27,7 @@ compare_*
 *.tar.gz
 *.rar
 # go ignore
+/target
 **/vendor
 *.exe
 *.exe~
