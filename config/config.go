@@ -7,5 +7,6 @@ type Server struct {
 	ExecInterval    int     `mapstructure:"execinterval" json:"execinterval" yaml:"execinterval"`
 	LocalKeyPrefix  string  `mapstructure:"localkeyprefix" json:"localkeyprefix" yaml:"localkeyprefix"`
 	RemoteKeyPrefix string  `mapstructure:"remotekeyprefix" json:"remotekeyprefix" yaml:"remotekeyprefix"`
+	LoopStep        int     `mapstructure:"loopstep" json:"loopstep" yaml:"loopstep"`
 }
 

@@ -15,6 +15,9 @@ zap:
 # 执行时间间隔，单位毫秒
 execinterval: 1
 
+# 循环执行步长，当大于步长时归零
+loopstep: 30
+
 # 本地key前缀
 localkeyprefix: a
 remotekeyprefix: b

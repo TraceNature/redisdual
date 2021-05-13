@@ -89,9 +89,10 @@ func startServer() {
 	redisRW.FlushAll()
 
 	global.RSPLog.Sugar().Info("execinterval:", global.RSPViper.GetInt("execinterval"))
+	loopstep := global.RSPViper.GetInt("loopstep")
 	i := 0
 	for {
-		if i > 500 {
+		if i > loopstep {
 			i = 0
 		}
 		redisRW.Set(global.RSPViper.GetString("localkeyprefix")+"_key"+strconv.Itoa(i), i, 3600*time.Second)
