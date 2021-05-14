@@ -95,7 +95,8 @@ func startServer() {
 		if i > loopstep {
 			i = 0
 		}
-		redisRW.Set(global.RSPViper.GetString("localkeyprefix")+"_key"+strconv.Itoa(i), i, 3600*time.Second)
+		key := global.RSPViper.GetString("localkeyprefix") + "_key" + strconv.Itoa(i)
+		redisRW.Set(key, key+"_"+strconv.FormatInt(time.Now().UnixNano(), 10), 3600*time.Second)
 		dual(redisRW, redisRO, global.RSPViper.GetString("localkeyprefix")+"_key"+strconv.Itoa(i))
 		dual(redisRW, redisRO, global.RSPViper.GetString("remotekeyprefix")+"_key"+strconv.Itoa(i))
 		i++
